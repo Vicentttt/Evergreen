@@ -21,10 +21,7 @@ class ContactController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Handle form submission logic here
-            // For example, send an email or save the form data to a database
-
-            // Redirect to a success page or display a success message
+         
             return $this->redirectToRoute('contact_success');
         }
 
@@ -38,7 +35,7 @@ class ContactController extends AbstractController
      */
     public function contactSuccess(): Response
     {
-        // Render a success page or display a success message
+
         return $this->render('contact/success.html.twig');
     }
 }
