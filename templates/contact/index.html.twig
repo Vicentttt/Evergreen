@@ -1,0 +1,34 @@
+{# templates/contact/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Contact Us</h1>
+    {{ form_start(form, {'attr': {'id': 'contact-form'}}) }}
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('#contact-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (validateForm()) {
+                form.submit();
+            }
+        });
+
+        function validateForm() {
+    // Ejemplo de validación: asegurarse de que un campo no esté vacío
+    var nameInput = document.querySelector('#name_field_id'); // Asumiendo que hay un campo con este ID
+    if (nameInput.value.trim() === '') {
+        alert('El campo nombre es obligatorio.');
+        return false;
+    }
+    return true;
+}
+
+    });
+</script>
