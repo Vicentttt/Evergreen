@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ComerciosRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ComerciosRepository::class)]
@@ -33,6 +35,22 @@ class Comercios
 
     #[ORM\Column(length: 30)]
     private ?string $razonSocial = null;
+
+    #[ORM\OneToMany(targetEntity: usuario::class, mappedBy: 'comercios')]
+    private Collection $usuario;
+
+    #[ORM\OneToMany(targetEntity: productos::class, mappedBy: 'comercios')]
+    private Collection $producto;
+
+    #[ORM\OneToMany(targetEntity: pedidos::class, mappedBy: 'comercios')]
+    private Collection $pedido;
+
+    public function __construct()
+    {
+        $this->usuario = new ArrayCollection();
+        $this->producto = new ArrayCollection();
+        $this->pedido = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -119,6 +137,96 @@ class Comercios
     public function setRazonSocial(string $razonSocial): static
     {
         $this->razonSocial = $razonSocial;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, usuario>
+     */
+    public function getUsuario(): Collection
+    {
+        return $this->usuario;
+    }
+
+    public function addUsuario(usuario $usuario): static
+    {
+        if (!$this->usuario->contains($usuario)) {
+            $this->usuario->add($usuario);
+            $usuario->setComercios($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsuario(usuario $usuario): static
+    {
+        if ($this->usuario->removeElement($usuario)) {
+            // set the owning side to null (unless already changed)
+            if ($usuario->getComercios() === $this) {
+                $usuario->setComercios(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, productos>
+     */
+    public function getProducto(): Collection
+    {
+        return $this->producto;
+    }
+
+    public function addProducto(productos $producto): static
+    {
+        if (!$this->producto->contains($producto)) {
+            $this->producto->add($producto);
+            $producto->setComercios($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProducto(productos $producto): static
+    {
+        if ($this->producto->removeElement($producto)) {
+            // set the owning side to null (unless already changed)
+            if ($producto->getComercios() === $this) {
+                $producto->setComercios(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, pedidos>
+     */
+    public function getPedido(): Collection
+    {
+        return $this->pedido;
+    }
+
+    public function addPedido(pedidos $pedido): static
+    {
+        if (!$this->pedido->contains($pedido)) {
+            $this->pedido->add($pedido);
+            $pedido->setComercios($this);
+        }
+
+        return $this;
+    }
+
+    public function removePedido(pedidos $pedido): static
+    {
+        if ($this->pedido->removeElement($pedido)) {
+            // set the owning side to null (unless already changed)
+            if ($pedido->getComercios() === $this) {
+                $pedido->setComercios(null);
+            }
+        }
 
         return $this;
     }

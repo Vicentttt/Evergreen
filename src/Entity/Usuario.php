@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UsuarioRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -42,6 +44,21 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $rol = null;
+
+    #[ORM\ManyToOne(inversedBy: 'usuario')]
+    private ?Comercios $comercios = null;
+
+    #[ORM\OneToMany(targetEntity: pedidos::class, mappedBy: 'usuario')]
+    private Collection $pedido;
+
+    #[ORM\OneToMany(targetEntity: valoraciones::class, mappedBy: 'usuario')]
+    private Collection $valoracion;
+
+    public function __construct()
+    {
+        $this->pedido = new ArrayCollection();
+        $this->valoracion = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -169,6 +186,78 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRol(bool $rol): static
     {
         $this->rol = $rol;
+
+        return $this;
+    }
+
+    public function getComercios(): ?Comercios
+    {
+        return $this->comercios;
+    }
+
+    public function setComercios(?Comercios $comercios): static
+    {
+        $this->comercios = $comercios;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, pedidos>
+     */
+    public function getPedido(): Collection
+    {
+        return $this->pedido;
+    }
+
+    public function addPedido(pedidos $pedido): static
+    {
+        if (!$this->pedido->contains($pedido)) {
+            $this->pedido->add($pedido);
+            $pedido->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removePedido(pedidos $pedido): static
+    {
+        if ($this->pedido->removeElement($pedido)) {
+            // set the owning side to null (unless already changed)
+            if ($pedido->getUsuario() === $this) {
+                $pedido->setUsuario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, valoraciones>
+     */
+    public function getValoracion(): Collection
+    {
+        return $this->valoracion;
+    }
+
+    public function addValoracion(valoraciones $valoracion): static
+    {
+        if (!$this->valoracion->contains($valoracion)) {
+            $this->valoracion->add($valoracion);
+            $valoracion->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValoracion(valoraciones $valoracion): static
+    {
+        if ($this->valoracion->removeElement($valoracion)) {
+            // set the owning side to null (unless already changed)
+            if ($valoracion->getUsuario() === $this) {
+                $valoracion->setUsuario(null);
+            }
+        }
 
         return $this;
     }
